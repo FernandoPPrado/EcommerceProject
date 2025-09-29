@@ -1,4 +1,4 @@
-package jwt;
+package com.example.demo.jwt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
