@@ -12,9 +12,11 @@ public class Purchase {
     Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     User user;
 
     @ManyToOne
+    @JoinColumn(name = "product_id")
     Product product;
 
     @Column(nullable = false)
@@ -28,7 +30,7 @@ public class Purchase {
     }
 
 
-    public Purchase(User user, Product product, PurchaseStatus purchaseStatus, LocalDateTime purchaseDate) {
+    public Purchase(User user, Product product, PurchaseStatus purchaseStatus) {
         this.user = user;
         this.product = product;
         this.purchaseStatus = purchaseStatus;
