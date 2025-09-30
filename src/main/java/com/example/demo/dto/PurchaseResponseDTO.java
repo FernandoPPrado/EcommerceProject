@@ -2,7 +2,7 @@ package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
-public record PurchaseRequest(
+public record PurchaseResponseDTO(
 
         Integer id,
         String username,
