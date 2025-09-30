@@ -71,16 +71,15 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public boolean havePermission(int userToUpdateId) {
+    public boolean havePermission(int userId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return user.getRole().name().equals(Role.ROLE_ADMIN.name()) || user.getId() == userToUpdateId;
+        return user.getRole().name().equals(Role.ROLE_ADMIN.name()) || user.getId() == userId;
     }
 
 
     public UserResponseDTO sendMyUser(User user) {
         User user1 = userRepository.findById(user.getId()).orElseThrow(() -> new UsernameNotFoundException("Usuario nao encontrado"));
-
         return new UserResponseDTO((long) user1.getId(), user1.getUsername(), user1.getEmail(), user1.getRole());
 
     }

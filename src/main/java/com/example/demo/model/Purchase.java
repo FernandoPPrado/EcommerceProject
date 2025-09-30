@@ -13,16 +13,17 @@ public class Purchase {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    Product product;
+    private Product product;
 
     @Column(nullable = false)
-    PurchaseStatus purchaseStatus;
+    @Enumerated(EnumType.STRING)
+    private PurchaseStatus purchaseStatus;
 
-    LocalDateTime purchaseDate;
+    private LocalDateTime purchaseDate;
 
     public Purchase() {
         this.purchaseDate = LocalDateTime.now();
