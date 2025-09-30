@@ -53,17 +53,16 @@ public class PurchaseService {
     }
 
 
-    public PurchaseResponseDTO updatePurchase(Integer id, PurchaseUpdateDTO purchase, User user, Product product) {
+    public PurchaseResponseDTO updatePurchase(Integer id, PurchaseUpdateDTO purchase) {
         Purchase purchaseTemp = purchaseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("PURCHASE NOT FOUND"));
-        purchaseTemp.setUser(user);
-        purchaseTemp.setProduct(product);
+        purchaseTemp.setUser(userRepository.findById(purchase.userId()).orElseThrow(() -> new EntityNotFoundException("USUARIO NAO ENCONTRADO")));
+        purchaseTemp.setProduct(productRepository.findById(purchase.productId()).orElseThrow(() -> new EntityNotFoundException("PRODUCT NAO ENCONTRADO")));
         purchaseTemp.setPurchaseStatus(purchase.purchaseStatus());
         purchaseTemp.setPurchaseDate(purchase.purchaseDate());
 
         Purchase purchaseUpdated = purchaseRepository.save(purchaseTemp);
 
-        return new PurchaseResponseDTO(purchaseUpdated.getId(), purchaseUpdated.getUser().getUsername(),
-                purchaseUpdated.getProduct().getProductName(), purchaseUpdated.getPurchaseStatus().name(), purchaseUpdated.getPurchaseDate());
+        return new PurchaseResponseDTO(purchaseUpdated.getId(), purchaseUpdated.getUser().getUsername(), purchaseUpdated.getProduct().getProductName(), purchaseUpdated.getPurchaseStatus().name(), purchaseUpdated.getPurchaseDate());
     }
 
 
@@ -71,30 +70,29 @@ public class PurchaseService {
         Purchase purchase = purchaseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("PURCHASE NOT FOUND"));
         purchase.setPurchaseStatus(purchaseStatus);
         purchaseRepository.save(purchase);
-        return new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(),
-                purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate());
+        return new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate());
     }
 
     public List<PurchaseResponseDTO> getAllPurchase() {
-        return purchaseRepository.findAll().stream()
-                .map(purchase ->
-                        new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(),
-                                purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
+        return purchaseRepository.findAll().stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
     }
 
     public List<PurchaseResponseDTO> getPurchaseFromUser(User user) {
-        return purchaseRepository.findByUser(user).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(),
-                purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
+        return purchaseRepository.findByUser(user).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
     }
 
     public List<PurchaseResponseDTO> getPurchaseFromStatus(PurchaseStatus purchaseStatus) {
-        return purchaseRepository.findByPurchaseStatus(purchaseStatus).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(),
-                purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
+        return purchaseRepository.findByPurchaseStatus(purchaseStatus).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
     }
 
     public List<PurchaseResponseDTO> getPurchaseFromProduct(Product product) {
-        return purchaseRepository.findByProduct(product).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(),
-                purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
+        return purchaseRepository.findByProduct(product).stream().map(purchase -> new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate())).toList();
+    }
+
+    public PurchaseResponseDTO getPurchaseFromId(Integer id) {
+        Purchase purchase = purchaseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ENTIDADE NAO ENCONTRADA"));
+
+        return new PurchaseResponseDTO(purchase.getId(), purchase.getUser().getUsername(), purchase.getProduct().getProductName(), purchase.getPurchaseStatus().name(), purchase.getPurchaseDate());
     }
 
 }
