@@ -39,7 +39,7 @@ public class PurchaseController {
         } else throw new AccessDeniedException("USUARIO NAO POSSUI PERMISSÃO");
     }
 
-    @PreAuthorize("isAutenticated()")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(path = "/me")
     public ResponseEntity<List<PurchaseResponseDTO>> getMyPurchases(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok().body(purchaseService.getPurchaseFromUser(user));
@@ -65,13 +65,8 @@ public class PurchaseController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<String> deletePurchase(@PathVariable Integer id) {
-        try {
-            purchaseService.deletePurchase(id);
-            return ResponseEntity.ok().body("PurchaseDeleted");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<Boolean> deletePurchase(@PathVariable Integer id) {
+        return ResponseEntity.ok().body((Boolean) purchaseService.deletePurchase(id));
     }
 
 }

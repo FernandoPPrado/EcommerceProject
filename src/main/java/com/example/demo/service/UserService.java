@@ -32,7 +32,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("USUARIO NAO ENCONTRADO"));
+    }
 
+    public User findByUserId(int id) {
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("USUARIO NAO ENCONTRADO"));
     }
 
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
