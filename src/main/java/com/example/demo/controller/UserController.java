@@ -28,13 +28,12 @@ public class UserController {
         return ResponseEntity.ok().body(userService.updateUser(id, userRequestDTO));
     }
 
-    @PreAuthorize("isAuthenticated")
+    @PreAuthorize("#user.id == #id or hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable @Valid int id) {
-
+    public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable @Valid int id, @AuthenticationPrincipal User user) {
         return ResponseEntity.ok().body(userService.deleteUser(id));
-
     }
+
     @PreAuthorize("isAuthenticated")
     @GetMapping(path = "/me")
     public ResponseEntity<UserResponseDTO> sendMyUser(@AuthenticationPrincipal User myUser) {

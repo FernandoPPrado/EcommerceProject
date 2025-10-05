@@ -2,9 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.PaymantRequestDTO;
 import com.example.demo.dto.PurchaseLinkResponseDTO;
+import com.example.demo.model.Purchase;
+import com.example.demo.model.PurchaseStatus;
+import com.example.demo.repository.PurchaseRepository;
 import com.example.demo.service.MercadoPagoService;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +27,13 @@ import java.util.Map;
 @RequestMapping(path = "/payments")
 public class MercadoPagoController {
 
+    PaymentClient client = new PaymentClient();
+
+    private final PurchaseRepository purchaseRepository;
     private final MercadoPagoService mercadoPagoService;
 
-    public MercadoPagoController(MercadoPagoService mercadoPagoService) {
+    public MercadoPagoController(PurchaseRepository purchaseRepository, MercadoPagoService mercadoPagoService) {
+        this.purchaseRepository = purchaseRepository;
         this.mercadoPagoService = mercadoPagoService;
 
     }
@@ -36,13 +45,16 @@ public class MercadoPagoController {
         return ResponseEntity.ok().body(mercadoPagoService.processPaymant(paymantRequestDTO, userDetails));
     }
 
+    //VALIDAÇAO MERCADOPAGO
     @PostMapping(path = "/webhook")
-    public ResponseEntity<Void> updateStatus(@RequestBody Map<String, Object> payload) {
-        String externalReference = (String) payload.get("external_reference");
-        String status = (String) payload.get("status");
-
-        mercadoPagoService.confirmPayment(externalReference, status);
-
+    public ResponseEntity<Void> updateStatus(@RequestBody Map<String, Object> payload) throws MPException, MPApiException {
+        Object idObject = payload.get("id");
+        Long id = Long.parseLong(idObject.toString());
+        Payment payment = client.get(id);
+        Purchase purchase = purchaseRepository.findById(Integer.parseInt(payment.getExternalReference())).orElseThrow();
+        PurchaseStatus status = PurchaseStatus.fromMercadoPagoStatus(payment.getStatus());
+        purchase.setPurchaseStatus(status);
+        purchaseRepository.save(purchase);
         return ResponseEntity.ok().build();
 
     }
