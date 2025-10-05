@@ -32,7 +32,7 @@ public class AuthController {
     UserService userService;
 
     @PostMapping(path = "/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<JwtResponse> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.username(), loginRequestDTO.userpassword()));
         String token = jwtUtils.generateToken(authentication.getName());
         return ResponseEntity.ok(new JwtResponse(token));
@@ -45,7 +45,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userService.createUser(userRequestDTO));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new UserResponseDTO(null, userRequestDTO.username(), userRequestDTO.email(), null));
+            return ResponseEntity.badRequest().build();
         }
 
     }

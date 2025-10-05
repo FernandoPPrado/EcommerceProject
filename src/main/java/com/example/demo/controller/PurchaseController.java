@@ -32,13 +32,11 @@ public class PurchaseController {
     UserService userService;
 
     @PostMapping("/create")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PurchaseLinkResponseDTO> createNewPurchase(@RequestBody @Valid PurchaseRequestDTO purchaseUpdateDTO) throws AccessDeniedException {
-        if (userService.havePermission(purchaseUpdateDTO.userId())) {
-            //metodo que retorna o mercado pago
-            String string = "TESTE";
-            return ResponseEntity.ok().body(new PurchaseLinkResponseDTO(purchaseService.createPurchase(purchaseUpdateDTO.userId(), purchaseUpdateDTO.productId(), purchaseUpdateDTO.purchaseStatus()), string));
-        } else throw new AccessDeniedException("USUARIO NAO POSSUI PERMISSÃO");
+        String string = "TESTE";
+        return ResponseEntity.ok().body(new PurchaseLinkResponseDTO(purchaseService.createPurchase(purchaseUpdateDTO.userId(), purchaseUpdateDTO.productId(), purchaseUpdateDTO.purchaseStatus()), string));
+
     }
 
     @PreAuthorize("isAuthenticated()")
