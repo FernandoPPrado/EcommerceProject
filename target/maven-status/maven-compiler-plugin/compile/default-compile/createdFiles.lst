@@ -9,7 +9,9 @@ com\example\demo\service\UserService.class
 com\example\demo\repository\UserRepository.class
 com\example\demo\dto\PurchaseUpdateDTO.class
 com\example\demo\dto\UserRequestDTO.class
+com\example\demo\dto\PaymantRequestDTO.class
 com\example\demo\dto\PurchaseRequestDTO.class
+com\example\demo\service\MercadoPagoService.class
 com\example\demo\controller\AuthController.class
 com\example\demo\dto\ProductResponseDTO.class
 com\example\demo\security\SecurityConfig.class
@@ -21,10 +23,13 @@ com\example\demo\model\User.class
 com\example\demo\controller\ProductController.class
 com\example\demo\model\PurchaseStatus.class
 com\example\demo\jwt\AuthEntryPointJwt.class
+com\example\demo\configuration\OpenApiConfig.class
+com\example\demo\client\MercadoPagoClient.class
 com\example\demo\repository\ProductRepository.class
 com\example\demo\repository\PurchaseRepository.class
 com\example\demo\dto\PurchaseLinkResponseDTO.class
 com\example\demo\jwt\AuthTokenFilter.class
 com\example\demo\model\Product.class
 com\example\demo\dto\LoginRequestDTO.class
+com\example\demo\controller\MercadoPagoController.class
 com\example\demo\model\Role.class

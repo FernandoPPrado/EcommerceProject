@@ -4,8 +4,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -14,13 +17,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-// Torna o filtro um bean gerenciado pelo Spring
 public class AuthTokenFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
-    // Injeção de dependências via construtor (boa prática)
     public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
@@ -31,32 +34,40 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // 1. Extrai o token JWT do header Authorization
-        String token = jwtUtils.getJwtFromHeader(request);
+        try {
+            // Pega o header Authorization
+            String authHeader = request.getHeader("Authorization");
 
-        // 2. Se o token existir e for válido
-        if (token != null && jwtUtils.validateJwtToken(token)) {
-            // 3. Extrai o username do token
-            String username = jwtUtils.getUserNameFromJwtToken(token);
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
 
-            // 4. Carrega os detalhes do usuário (roles, permissões, etc.)
-            var userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtUtils.validateJwtToken(token)) {
+                    String username = jwtUtils.getUserNameFromJwtToken(token);
 
-            // 5. Cria um objeto de autenticação para o Spring Security
-            var auth = new UsernamePasswordAuthenticationToken(
-                    userDetails,               // principal (usuário autenticado)
-                    null,                      // credenciais (não precisamos aqui)
-                    userDetails.getAuthorities() // roles/permissões
-            );
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // 6. Adiciona detalhes extras da requisição (como IP, sessão, etc.)
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-            // 7. Registra a autenticação no contexto do Spring Security
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.debug("Autenticação definida para usuário: {}", username);
+                } else {
+                    logger.debug("Token JWT inválido");
+                }
+            } else {
+                logger.debug("Nenhum header Authorization encontrado");
+            }
+        } catch (Exception e) {
+            logger.error("Erro no filtro JWT: {}", e.getMessage());
         }
 
-        // 8. Continua a cadeia de filtros
+        // Continua a cadeia de filtros
         filterChain.doFilter(request, response);
     }
 }

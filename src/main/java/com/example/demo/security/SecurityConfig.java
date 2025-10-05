@@ -23,7 +23,7 @@ public class SecurityConfig {
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
-    // registra o filtro manualmente como bean
+    // registra o filtro JWT como bean
     @Bean
     public AuthTokenFilter authTokenFilter(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
         return new AuthTokenFilter(jwtUtils, userDetailsService);
@@ -32,14 +32,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            AuthTokenFilter authTokenFilter) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/create").permitAll()
+                        // Endpoints públicos
+                        .requestMatchers(
+                                "/auth/**",              // login e cadastro
+                                "/swagger-ui.html",      // página principal
+                                "/swagger-ui/**",        // recursos do Swagger UI
+                                "/v3/api-docs/**",       // OpenAPI JSON
+                                "/swagger-resources/**", // recursos do Swagger
+                                "/webjars/**"            // dependências estáticas
+                        ).permitAll()
+                        // qualquer outra requisição precisa estar autenticada
                         .anyRequest().authenticated()
                 )
+                // filtro JWT antes do UsernamePasswordAuthenticationFilter
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // opcional: liberar uso de frames (ex.: H2 console)
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();
     }

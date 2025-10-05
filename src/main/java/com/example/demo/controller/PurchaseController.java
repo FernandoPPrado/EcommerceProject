@@ -7,6 +7,7 @@ import com.example.demo.dto.PurchaseUpdateDTO;
 import com.example.demo.model.User;
 import com.example.demo.service.PurchaseService;
 import com.example.demo.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/purchase")
+@SecurityRequirement(name = "bearerAuth")
 public class PurchaseController {
 
     @Autowired
