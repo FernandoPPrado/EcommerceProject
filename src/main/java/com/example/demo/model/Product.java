@@ -1,10 +1,12 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 
 @Entity
+@SQLRestriction("active = true")
 public class Product {
 
     @Id
@@ -23,6 +25,9 @@ public class Product {
     @Column(nullable = false)
     private Integer stockQuantity;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
 
     public Product() {
     }
@@ -32,6 +37,15 @@ public class Product {
         this.productDescription = productDescription;
         this.productPrice = productPrice;
         this.stockQuantity = stockQuantity;
+        this.active = true;
+    }
+
+    public boolean isAcctive() {
+        return active;
+    }
+
+    public void setAcctive(boolean acctive) {
+        this.active = acctive;
     }
 
     public Integer getProductId() {

@@ -29,7 +29,8 @@ public class ProductService {
     public ProductResponseDTO deleteProduct(Integer id) {
 
         Product product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
-        productRepository.delete(product);
+        product.setAcctive(false);
+        productRepository.save(product);
         return new ProductResponseDTO(product.getProductId(), product.getProductName(), product.getProductDescription(), product.getProductPrice(), product.getStockQuantity());
     }
 
