@@ -14,3 +14,7 @@ application.yml
 
 # Logs
 *.log
+
+# Arquivos estáticos copiados para o Spring Boot
+src/main/resources/static/
+src/main/resources/static/assets/

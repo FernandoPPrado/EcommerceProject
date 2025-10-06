@@ -46,9 +46,16 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/index.html",
+                                "/",                // libera a raiz
+                                "/assets/**",       // libera os arquivos do build (JS, CSS, imagens)
+                                "/*.js",
+                                "/*.css",
+                                "/favicon.ico"
                         ).permitAll()
                         .anyRequest().authenticated()
+
                 )
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));

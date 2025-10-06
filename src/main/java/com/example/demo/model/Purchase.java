@@ -25,6 +25,10 @@ public class Purchase {
 
     private LocalDateTime purchaseDate;
 
+    @Column(nullable = false)
+    private boolean activated = true;
+
+
     public Purchase() {
         this.purchaseDate = LocalDateTime.now();
         this.purchaseStatus = PurchaseStatus.PENDING;
@@ -38,6 +42,10 @@ public class Purchase {
         this.purchaseDate = LocalDateTime.now();
     }
 
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
     public Integer getId() {
         return id;
