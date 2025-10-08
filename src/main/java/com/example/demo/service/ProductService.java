@@ -36,7 +36,7 @@ public class ProductService {
 
 
     public List<ProductResponseDTO> getAllProduct() {
-        return productRepository.findAll().stream().map(e -> new ProductResponseDTO(e.getProductId(), e.getProductName(), e.getProductDescription(), e.getProductPrice(), e.getStockQuantity())).toList();
+        return productRepository.findAll().stream().filter(Product::isAcctive).map(e -> new ProductResponseDTO(e.getProductId(), e.getProductName(), e.getProductDescription(), e.getProductPrice(), e.getStockQuantity())).toList();
     }
 
 

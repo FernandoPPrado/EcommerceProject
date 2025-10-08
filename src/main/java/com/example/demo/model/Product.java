@@ -6,7 +6,6 @@ import org.hibernate.annotations.SQLRestriction;
 import java.math.BigDecimal;
 
 @Entity
-@SQLRestriction("active = true")
 public class Product {
 
     @Id
