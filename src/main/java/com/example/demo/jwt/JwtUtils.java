@@ -33,34 +33,28 @@ public class JwtUtils {
 
     // Gera um token simples com subject = username
     public String generateToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        return Jwts.builder().setSubject(username).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs)).signWith(key, SignatureAlgorithm.HS256).compact();
     }
 
-    // Valida a assinatura e a expiração do token
+    // Valida a assinatura e a expiração do token: lança JwtException em vez de só retornar false
     public boolean validateJwtToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            // Lança exceção para propagar (não filtra silenciosamente)
+            throw new JwtException("Token JWT inválido: " + e.getMessage(), e);
         }
     }
 
-    // Extrai o username (subject) do token
+    // Extrai o username (subject) do token: lança exceção se inválido
     public String getUserNameFromJwtToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return claims.getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            // Lança exceção para propagar
+            throw new JwtException("Erro ao extrair username do token: " + e.getMessage(), e);
+        }
     }
 }
