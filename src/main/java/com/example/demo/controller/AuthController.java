@@ -5,6 +5,7 @@ import com.example.demo.dto.LoginRequestDTO;
 import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.jwt.JwtUtils;
+import com.example.demo.loginLimit.LoginAttemptService;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,34 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @Autowired
+    LoginAttemptService loginAttemptService;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
     UserService userService;
 
     @PostMapping(path = "/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.username(), loginRequestDTO.userpassword()));
-        String token = jwtUtils.generateToken(authentication.getName());
-        return ResponseEntity.ok(new JwtResponse(token));
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
+        String username = loginRequestDTO.username();
+
+        if (!loginAttemptService.podeTentar(username)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("MUITAS TENTATIVAS, AGUARDE ALGUNS SEGUNDOS");
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.username(), loginRequestDTO.userpassword()));
+
+            loginAttemptService.reset(username);
+            String token = jwtUtils.generateToken(authentication.getName());
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (Exception e) {
+            loginAttemptService.registerFailure(username);
+            long delay = loginAttemptService.getDelaySeconds(username);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body("Aguarde " + delay + " segundos antes de tentar novamente.");
+        }
     }
 
     //TRATAR EXCESSOES
