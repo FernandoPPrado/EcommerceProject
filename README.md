@@ -1,78 +1,120 @@
-# 🚀 Demo Spring Boot API
+# 🚀 EcommerceProject
 
-API REST desenvolvida em **Spring Boot** com autenticação via **JWT**, integração com **MercadoPago**, documentação com **Swagger** e suporte a **Docker** para execução local e deploy no Railway.
-
----
-
-## 📌 Tecnologias utilizadas
-- Java 17
-- Spring Boot 3.x
-- Spring Security + JWT
-- Spring Data JPA
-- Swagger (Springdoc OpenAPI)
-- Maven
-- Docker
-- Railway (deploy com HTTPS automático)
-- MercadoPago SDK
+## 🌐 Visão Geral
+API REST em **Spring Boot** com:
+- 🔒 Autenticação via JWT  
+- 💳 Integração com MercadoPago  
+- 📄 Documentação interativa com Swagger (Springdoc OpenAPI)  
+- 🐳 Docker & Docker Compose para execução local  
+- ☁️ Deploy automático no Railway com HTTPS  
+- ⏱️ Timer de tentativas de login com backoff exponencial  
 
 ---
 
-## 📖 Endpoints da API
+## 🛠️ Tecnologias
+
+| Tecnologia | Descrição |
+|------------|-----------|
+| ☕ Java 17 | Linguagem principal |
+| 📦 Spring Boot 3.x | Framework para microserviços |
+| 🔒 Spring Security + JWT | Autenticação e autorização |
+| 🗄️ Spring Data JPA | Persistência de dados |
+| 📋 Springdoc OpenAPI | Documentação Swagger |
+| 🧩 Maven | Gerenciamento de dependências |
+| 🐳 Docker & Docker Compose | Containerização |
+| ☁️ Railway | Deploy em nuvem |
+| 💳 MercadoPago SDK | Integração de pagamentos |
+
+---
+
+## 📖 Endpoints
 
 ### 🔑 Autenticação (`/auth`)
-| Método | Endpoint       | Descrição                        | Autenticação |
-|--------|----------------|----------------------------------|--------------|
-| POST   | `/auth/login`  | Login com usuário e senha, retorna JWT | ❌ |
-| POST   | `/auth/create` | Cria novo usuário (registro)     | ❌ |
+
+| Método | Endpoint       | Descrição                  | Auth |
+|--------|----------------|----------------------------|------|
+| POST   | `/auth/login`  | 🗝️ Retorna JWT             | ❌   |
+| POST   | `/auth/create` | ✍️ Registra novo usuário   | ❌   |
 
 ---
 
 ### 👤 Usuários (`/user`)
-| Método | Endpoint              | Descrição                                | Autenticação |
-|--------|-----------------------|------------------------------------------|--------------|
-| PUT    | `/user/update/{id}`   | Atualiza dados do usuário                 | ✅ (self ou admin) |
-| DELETE | `/user/delete/{id}`   | Remove usuário (self ou admin)            | ✅ |
-| GET    | `/user/me`            | Retorna dados do usuário autenticado      | ✅ |
+
+| Método | Endpoint             | Descrição                        | Auth            |
+|--------|----------------------|----------------------------------|-----------------|
+| PUT    | `/user/update/{id}`  | 📝 Atualiza usuário              | ✅ (self/admin) |
+| DELETE | `/user/delete/{id}`  | 🗑️ Remove usuário                | ✅ (self/admin) |
+| GET    | `/user/me`           | 👤 Dados do usuário logado       | ✅              |
 
 ---
 
 ### 🛒 Produtos (`/product`)
-| Método | Endpoint              | Descrição                                | Autenticação |
-|--------|-----------------------|------------------------------------------|--------------|
-| POST   | `/product/create`     | Cria novo produto                         | ✅ (admin) |
-| DELETE | `/product/delete/{id}`| Remove produto                            | ✅ (admin) |
-| PUT    | `/product/update/{id}`| Atualiza produto                          | ✅ (admin) |
-| GET    | `/product/get/{id}`   | Busca produto por ID                      | ✅ (admin) |
-| GET    | `/product/getall`     | Lista todos os produtos                   | ✅ (usuário autenticado) |
+
+| Método | Endpoint               | Descrição                  | Auth   |
+|--------|------------------------|----------------------------|--------|
+| POST   | `/product/create`      | ➕ Cria produto             | ✅ admin |
+| DELETE | `/product/delete/{id}` | ➖ Remove produto           | ✅ admin |
+| PUT    | `/product/update/{id}` | ✏️ Atualiza produto         | ✅ admin |
+| GET    | `/product/get/{id}`    | 🔍 Busca produto por ID     | ✅ admin |
+| GET    | `/product/getall`      | 📜 Lista todos os produtos  | ✅ user |
 
 ---
 
 ### 💳 Pagamentos (`/payments`)
-| Método | Endpoint              | Descrição                                | Autenticação |
-|--------|-----------------------|------------------------------------------|--------------|
-| POST   | `/payments`           | Cria pagamento de produto via MercadoPago | ✅ |
-| POST   | `/payments/webhook`   | Webhook do MercadoPago para atualizar status | ❌ (chamado pelo MercadoPago) |
+
+| Método | Endpoint            | Descrição                                | Auth |
+|--------|---------------------|------------------------------------------|------|
+| POST   | `/payments`         | 💰 Cria pagamento via MercadoPago        | ✅   |
+| POST   | `/payments/webhook` | 🔄 Webhook MercadoPago (atualiza status) | ❌   |
 
 ---
 
 ### 📦 Compras (`/purchase`)
-| Método | Endpoint              | Descrição                                | Autenticação |
-|--------|-----------------------|------------------------------------------|--------------|
-| POST   | `/purchase/create`    | Cria nova compra                         | ✅ (admin) |
-| GET    | `/purchase/me`        | Lista compras do usuário autenticado      | ✅ |
-| GET    | `/purchase/getall`    | Lista todas as compras                    | ✅ (admin) |
-| GET    | `/purchase/get/{id}`  | Busca compra por ID                       | ✅ (admin) |
-| PUT    | `/purchase/update/{id}`| Atualiza compra                          | ✅ (admin) |
-| DELETE | `/purchase/delete/{id}`| Remove compra                            | ✅ (admin) |
+
+| Método | Endpoint                  | Descrição                  | Auth   |
+|--------|---------------------------|----------------------------|--------|
+| POST   | `/purchase/create`        | 🛒 Cria nova compra        | ✅ admin |
+| GET    | `/purchase/me`            | 📋 Compras do usuário      | ✅ user |
+| GET    | `/purchase/getall`        | 📑 Lista todas as compras  | ✅ admin |
+| GET    | `/purchase/get/{id}`      | 🔎 Busca compra por ID     | ✅ admin |
+| PUT    | `/purchase/update/{id}`   | ♻️ Atualiza compra         | ✅ admin |
+| DELETE | `/purchase/delete/{id}`   | ❌ Remove compra           | ✅ admin |
 
 ---
 
-## 🔒 Segurança
-- Autenticação via **JWT** no header `Authorization: Bearer <token>`
-- CSRF desabilitado (não necessário com JWT)
-- Permissões baseadas em **roles** (`ROLE_USER`, `ROLE_ADMIN`)
+## 🔒 Usuário de Teste
+
+Para testar rapidamente:  
+- **username:** `UsuarioTeste`  
+- **senha:** `123456`  
 
 ---
 
-## 📜 Swagger
-A documentação da API estará disponível em:
+## ⚙️ Configuração de Ambiente
+
+1. 📝 Copiar o arquivo de exemplo:  
+   cp application.properties.example application.properties
+
+2. 🔒 Preencher em application.properties:
+
+- DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
+
+- MERCADO_ACCESS_TOKEN
+
+- SERVER_PORT
+
+▶️ Executar:
+
+- mvn clean spring-boot:run
+
+🐳 (Opcional) Docker Compose:
+
+- docker-compose up --build
+
+📄 Documentação Swagger
+
+[👉 Acesse aqui](https://meuapp-production-8692.up.railway.app/swagger-ui/index.html)
+
+📝 Licença
+
+MIT License
