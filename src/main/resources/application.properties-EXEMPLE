@@ -1,0 +1,16 @@
+# Banco de dados MySQL
+spring.datasource.url=jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:testdb}
+spring.datasource.username=${DB_USERNAME:root}
+spring.datasource.password=${DB_PASSWORD:password}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA / Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+
+# MercadoPago (modo teste)
+mercado.access.token=${MERCADO_ACCESS_TOKEN:SEU_TOKEN_AQUI}
+
+# Porta do servidor
+server.port=${SERVER_PORT:3030}
