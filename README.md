@@ -1,6 +1,9 @@
 # 🚀 EcommerceProject
 
 ## 🌐 Visão Geral
+
+[👉 Acesse aqui](https://gallant-mindfulness-production.up.railway.app/)
+
 API REST em **Spring Boot** com:
 - 🔒 Autenticação via JWT  
 - 💳 Integração com MercadoPago  
@@ -113,7 +116,7 @@ Para testar rapidamente:
 
 📄 Documentação Swagger
 
-[👉 Acesse aqui](https://meuapp-production-8692.up.railway.app/swagger-ui/index.html)
+[👉 Acesse aqui](https://gallant-mindfulness-production.up.railway.app/swagger-ui/index.html)
 
 📝 Licença
 
