@@ -93,5 +93,28 @@ Para testar rapidamente:
 ## ⚙️ Configuração de Ambiente
 
 1. 📝 Copiar o arquivo de exemplo:  
-   ```bash
    cp application.properties.example application.properties
+
+2. 🔒 Preencher em application.properties:
+
+- DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD
+
+- MERCADO_ACCESS_TOKEN
+
+- SERVER_PORT
+
+▶️ Executar:
+
+- mvn clean spring-boot:run
+
+🐳 (Opcional) Docker Compose:
+
+- docker-compose up --build
+
+📄 Documentação Swagger
+
+[👉 Acesse aqui](https://meuapp-production-8692.up.railway.app/swagger-ui/index.html)
+
+📝 Licença
+
+MIT License
